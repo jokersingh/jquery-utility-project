@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Delete and Add Row</title>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+<h2 align="middle">Example to add and remove rows</h2>
+	<table id="subject" class="table table-striped table-bordered">
+		<thead>
+			<th class="col-md-1">#</th>
+			<th class="col-md-4">Description</th>
+			<th class="col-md-4">&nbsp;</th>
+			<th class="col-md-3">&nbsp;</th>
+		</thead>
+		<tbody>
+			<tr id="row_01">
+				<td class="col-md-1">01</td>
+				<td class="col-md-4"><Select id="cat_01" class="col-md-12" onchange="populateropdown('cat_01')"><option
+							id=""></option>
+						<option id="A">A</option>
+						<option id="B">B</option></Select></td>
+				<td class="col-md-4"><Select id="sub_01" class="col-md-12" onchange="populateropdown('sub_01')"><option
+							id=""></option>
+						<option id="X">X</option>
+						<option id="Y">Y</option></Select></td>
+				<td class="col-md-3"><button value="Add" onclick="addRow()">ADD</button></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		function populateropdown(name) {
+			var splitedName = name.split('_');
+			var anotherField;
+			if (splitedName[0] === 'sub') {
+				anotherField = 'cat_' + splitedName[1];
+			} else {
+				anotherField = 'sub_' + splitedName[1];
+			}
+			if ($("#" + name + " option:selected").text() === null
+					|| $("#" + name + " option:selected").text() === '') {
+				var rowNr = $('#row_' + splitedName[1]).index();
+				$('#childrow_' + splitedName[1]).remove();
+				$('#' + name).html("<select id='"+name+"'></select>");
+				var mydata = [ 'test1', 'test2' ];
+				$('#' + name).append('<option value="" id=""></option>');
+				for (var i = 0; i < mydata.length; i++) {
+					$('#' + name).append(
+							'<option id="' + mydata[i] + '" value="' + mydata[i] + '">'
+									+ mydata[i] + '</option>');
+				}
+				$('#' + anotherField).html(
+						"<select id='"+anotherField+"'></select>");
+				var mydata = [ 'test3', 'test4' ];
+				$('#' + anotherField)
+						.append('<option value="" id=""></option>');
+				for (var i = 0; i < mydata.length; i++) {
+					$('#' + anotherField).append(
+							'<option id="' + mydata[i] + '" value="' + mydata[i] + '">'
+									+ mydata[i] + '</option>');
+				}
+			} else if ($("#" + anotherField + " option:selected").text() === null
+					|| $("#" + anotherField + " option:selected").text() === '') {
+				$('#' + anotherField).html(
+						"<select id='"+anotherField+"'></select>");
+				var mydata = [ 'test3', 'test4' ];
+				$('#' + anotherField)
+						.append('<option value="" id=""></option>');
+				for (var i = 0; i < mydata.length; i++) {
+					$('#' + anotherField).append(
+							'<option id="' + mydata[i] + '" value="' + mydata[i] + '">'
+									+ mydata[i] + '</option>');
+				}
+			} else {
+				var rowNr = $('#row_' + splitedName[1]).index();
+				$('#childrow_' + splitedName[1]).remove();
+				var newRow = '<tr id=\"childrow_'+splitedName[1]+'\"><td></td><td>ROWS</td><td><input type="text" class="code" id="customFieldName" name="customFieldName[]" value="" placeholder="Input Name" /> </td><td> </td></tr>';
+				$('#subject > tbody > tr').eq(parseInt(rowNr)).after(newRow);
+				$('#subject > tbody > tr').eq(parseInt(rowNr)).after(newRow);
+
+			}
+		}
+
+		function addRow() {
+			if (validate()) {
+				var rowNr = $('tr[id^=row_]').length;
+				$('button[id^=del_]').hide();
+				var idNr = '';
+				rowNr = rowNr + 1;
+				if (rowNr < 10) {
+					idNr = idNr + "0" + rowNr;
+				} else {
+					idNr = idNr + rowNr;
+				}
+				$("#subject")
+						.append(
+								"<tr id='row_"+idNr+"'><td>"
+										+ idNr
+										+ "</td><td><Select id='cat_"
+										+ idNr
+										+ "' onchange=\"populateropdown('cat_"
+										+ idNr
+										+ "')\" class=\"col-md-12\"><option id=''></option><option id='A'>A</option><option id='B'>B</option></Select></td><td><Select id='sub_"
+										+ idNr
+										+ "' onchange=\"populateropdown('sub_"
+										+ idNr
+										+ "')\" class=\"col-md-12\"><option id=''></option><option id='X'>X</option><option id='Y'>Y</option></Select></td><td><button id=\"del_"
+										+ idNr
+										+ "\" value='Delete' onclick=\"deleteRow('row_"
+										+ idNr + "')\">Delete</button> <td></tr>");
+			} else {
+				alert('all field are mand');
+			}
+		}
+
+		function deleteRow(rowTodelete) {
+			var splitedNr = rowTodelete.split('_');
+			var rowNr = $('#' + rowTodelete).index();
+			var showdel = parseInt(splitedNr[1]) - 1;
+			if (showdel < 10) {
+				$('#del_0' + showdel).show();
+			} else {
+				$('#del_' + showdel).show();
+			}
+			var lastNr = $('#subject > tbody').find('tr').last().index();
+			for (var nr = lastNr + 1; nr > rowNr; nr--) {
+				$("tr").eq(nr).remove();
+			}
+		}
+
+		function validate() {
+			var isValid = false;
+			$('input[type="text"]').each(function() {
+				if ($.trim($(this).val()) == '') {
+					isValid = false;
+					$(this).css({
+						"border" : "1px solid red"
+					});
+				} else {
+					isValid = true;
+					$(this).css({
+						"border" : "",
+					});
+				}
+			});
+			$('select').each(function() {
+				if ($.trim($(this).val()) == '') {
+					isValid = false;
+					$(this).css({
+						"border" : "1px solid red"
+					});
+				} else {
+					isValid = true;
+					$(this).css({
+						"border" : "",
+					});
+				}
+			});
+			return isValid;
+		}
+		
+	</script>
+</body>
+</html>
