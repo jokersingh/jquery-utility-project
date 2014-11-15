@@ -8,6 +8,6 @@ Here are the list of files:
 <li><b>Tab</b> : it checks if you moved focus from the current window</li>
 </ul>
 
-for more go to <a href="https://github.com/jokersingh/jquery-utility-project/wiki/_new">wiki</a>
+for more go to <a href="https://github.com/jokersingh/jquery-utility-project/wiki">wiki</a>
 
 
